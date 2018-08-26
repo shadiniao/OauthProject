@@ -1,0 +1,14 @@
+# IDEA/Android Studio ignores
+*.iml
+*.ipr
+*.iws
+/.idea/*
+# IDEA/Android Studio Ignore exceptions
+.idea/compiler.xml
+.idea/copyright/
+.idea/encodings.xml
+
+security-app/target/
+security-browser/target/
+security-core/target/
+security-demo/target/
