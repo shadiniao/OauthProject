@@ -2,7 +2,7 @@
 *.iml
 *.ipr
 *.iws
-/.idea/*
+.idea/*
 # IDEA/Android Studio Ignore exceptions
 .idea/compiler.xml
 .idea/copyright/
