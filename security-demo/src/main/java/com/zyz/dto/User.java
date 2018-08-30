@@ -1,64 +1,70 @@
 package com.zyz.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import java.util.Date;
+import com.zyz.validator.CheckType;
+import com.zyz.validator.UserConstraint;
+
 import org.hibernate.validator.constraints.NotBlank;
+
+import java.util.Date;
+
+import javax.validation.constraints.Past;
 
 /**
  * Created by yizhi on 2018-08-26.
  */
 public class User {
+    private String id;
+    @UserConstraint(message = "用户名重复", groups = CheckType.CreateCheck.class)
+    private String username;
+    @NotBlank(message = "密码不能为空")
+    private String password;
+    @Past(message = "生日必须为过去的时间")
+    private Date birthday;
 
-  public interface UserSimpleView {
+    @JsonView(UserSimpleView.class)
+    public Date getBirthday() {
+        return birthday;
+    }
 
-  }
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
 
-  public interface UserDetailView extends UserSimpleView {
+    @JsonView(UserSimpleView.class)
+    public String getId() {
+        return id;
+    }
 
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  private String id;
+    @JsonView(UserSimpleView.class)
+    public String getUsername() {
+        return username;
+    }
 
-  private String username;
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-  @NotBlank
-  private String password;
+    @JsonView(UserDetailView.class)
+    public String getPassword() {
+        return password;
+    }
 
-  private Date birthday;
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-  @JsonView(UserSimpleView.class)
-  public Date getBirthday() {
-    return birthday;
-  }
+    public interface UserSimpleView {
 
-  public void setBirthday(Date birthday) {
-    this.birthday = birthday;
-  }
+    }
 
-  @JsonView(UserSimpleView.class)
-  public String getId() {
-    return id;
-  }
+    public interface UserDetailView extends UserSimpleView {
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    }
 
-  @JsonView(UserSimpleView.class)
-  public String getUsername() {
-    return username;
-  }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  @JsonView(UserDetailView.class)
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
 }

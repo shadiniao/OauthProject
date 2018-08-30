@@ -21,6 +21,7 @@
             <version>${zyz.security.version}</version>
         </dependency>
 
+        <!--浏览器需要用到session-->
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session</artifactId>

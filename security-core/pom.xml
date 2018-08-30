@@ -5,8 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>security-core</artifactId>
 
+    <!--打jar包-->
     <packaging>jar</packaging>
 
+    <!--父项目-->
     <parent>
         <groupId>com.zyz.security</groupId>
         <artifactId>security</artifactId>

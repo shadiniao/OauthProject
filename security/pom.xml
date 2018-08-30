@@ -10,12 +10,14 @@
 
     <packaging>pom</packaging>
 
+    <!-- 常量，版本属性 -->
     <properties>
         <zyz.security.version>1.0.0-SNAPSHOT</zyz.security.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- spring io: 引入该项后,不用指定spring相关的版本 -->
             <dependency>
                 <groupId>io.spring.platform</groupId>
                 <artifactId>platform-bom</artifactId>
@@ -24,6 +26,7 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- spring cloud 框架 -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -36,6 +39,7 @@
 
     <build>
         <plugins>
+            <!-- maven 打包工具 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -49,6 +53,7 @@
         </plugins>
     </build>
 
+    <!-- 其他项目作为模块 -->
     <modules>
         <module>../security-app</module>
         <module>../security-browser</module>
