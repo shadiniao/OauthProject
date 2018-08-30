@@ -1,5 +1,6 @@
 package com.zyz.web.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -130,5 +131,12 @@ public class UserControllerTest {
                 .getContentAsString();
 
         System.out.println(result);
+    }
+
+    @Test
+    public void whenDeleteSuccess() throws Exception {
+        mockMvc.perform(delete("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
+
     }
 }
