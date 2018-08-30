@@ -3,6 +3,7 @@ package com.zyz.web.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.zyz.dto.User;
 import com.zyz.dto.UserQueryCondition;
+import com.zyz.exception.BusinessException;
 import com.zyz.validator.CheckType;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -53,18 +54,16 @@ public class UserController {
     @GetMapping("/{id:\\d+}")
     @JsonView(User.UserDetailView.class)
     public User getInfo(@PathVariable String id) {
+        if (id.equals("100")) {
+            throw new BusinessException("user not exist");
+        }
         User user = new User();
         user.setUsername("tom");
         return user;
     }
 
     @PostMapping
-    public User create(@Validated(CheckType.CreateCheck.class) @RequestBody User user, BindingResult errors) {
-        if (errors.hasErrors()) {
-            errors.getAllErrors().stream()
-                    .forEach(error -> System.out.println("发生错误:" + error.getDefaultMessage()));
-        }
-
+    public User create(@Validated(CheckType.CreateCheck.class) @RequestBody User user) {
         System.out.println(user.getId());
         System.out.println(user.getUsername());
         System.out.println(user.getPassword());

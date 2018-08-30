@@ -81,6 +81,16 @@ public class UserControllerTest {
     }
 
     @Test
+    public void whenGetInfoUserNotExist() throws Exception {
+        String result = mockMvc
+                .perform(get("/user/100").contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isInternalServerError())
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println(result);
+    }
+
+    @Test
     public void whenCreateSuccess() throws Exception {
         Date date = new Date();
         System.out.println(date.getTime());
@@ -137,6 +147,7 @@ public class UserControllerTest {
     public void whenDeleteSuccess() throws Exception {
         mockMvc.perform(delete("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
-
     }
+
+
 }
