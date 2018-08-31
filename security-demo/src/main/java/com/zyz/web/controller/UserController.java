@@ -57,6 +57,9 @@ public class UserController {
         if (id.equals("100")) {
             throw new BusinessException("user not exist");
         }
+        if (id.equals("200")) {
+            throw new RuntimeException("user is illegal");
+        }
         System.out.println("进入getInfo服务");
         User user = new User();
         user.setUsername("tom");

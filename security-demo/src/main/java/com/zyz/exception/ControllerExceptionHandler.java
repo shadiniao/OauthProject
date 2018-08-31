@@ -20,6 +20,8 @@ public class ControllerExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, Object> handleBusinessException(BusinessException ex) {
+        System.out.println("进入handleBusinessException");
+
         Map<String, Object> result = new HashMap<>();
         result.put("message", ex.getMessage());
 
