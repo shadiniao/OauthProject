@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class TimeAspect {
     // 第一个*表示任何返回值, 第二个*表示任何方法, (..)这个方法包含任何参数
     // 也就是表示UserController中的任何方法

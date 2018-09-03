@@ -26,6 +26,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * Created by yizhi on 2018-08-26.
  */
@@ -35,6 +39,7 @@ public class UserController {
 
     @GetMapping
     @JsonView(User.UserSimpleView.class)
+    @ApiOperation(value = "用户查询服务")
     public List<User> query(UserQueryCondition condition,
                             @PageableDefault(page = 2, size = 17, sort = "username asc") Pageable pageable) {
         List<User> users = new ArrayList<>();
@@ -53,7 +58,7 @@ public class UserController {
 
     @GetMapping("/{id:\\d+}")
     @JsonView(User.UserDetailView.class)
-    public User getInfo(@PathVariable String id) {
+    public User getInfo(@ApiParam("用户id") @PathVariable String id) {
         if (id.equals("100")) {
             throw new BusinessException("user not exist");
         }
