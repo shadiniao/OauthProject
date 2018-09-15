@@ -1,6 +1,7 @@
 package com.zyz.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zyz.security.browser.support.SimpleResponse;
 import com.zyz.security.core.properties.LoginType;
 import com.zyz.security.core.properties.SecurityProperties;
 
@@ -39,7 +40,7 @@ public class CoreAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         // 如果配置的是json, 就还是用老的处理方式
         if (securityProperties.getBrowser().getLoginType().equals(LoginType.JSON)) {
             httpServletResponse.setContentType("application/json;charset=utf-8");
-            httpServletResponse.getWriter().write(objectMapper.writeValueAsString(ex));
+            httpServletResponse.getWriter().write(objectMapper.writeValueAsString(new SimpleResponse(ex.getMessage())));
         } else {
             super.onAuthenticationFailure(httpServletRequest, httpServletResponse, ex);
         }
