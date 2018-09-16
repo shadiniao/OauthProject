@@ -1,21 +1,23 @@
 package com.zyz.security.core.validate.code;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.social.connect.web.HttpSessionSessionStrategy;
-import org.springframework.social.connect.web.SessionStrategy;
-import org.springframework.web.bind.ServletRequestBindingException;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.filter.OncePerRequestFilter;
-
+import com.zyz.security.core.properties.SecurityProperties;
 import java.io.IOException;
-
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.social.connect.web.HttpSessionSessionStrategy;
+import org.springframework.social.connect.web.SessionStrategy;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * 2018/9/15.
@@ -23,15 +25,46 @@ import javax.servlet.http.HttpServletResponse;
  * @author zhangyizhi
  */
 // 继承OncePerRequestFilter, 这是spring中的一个工具类, 保证filter每次请求只会被调用一次
-public class ValidateCodeFilter extends OncePerRequestFilter {
+public class ValidateCodeFilter extends OncePerRequestFilter implements InitializingBean {
+
     private AuthenticationFailureHandler authenticationFailureHandler;
 
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
 
+    private SecurityProperties securityProperties;
+
+    private AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+    private Set<String> urls = new HashSet<>();
+
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (StringUtils.equals("/authentication/form", request.getRequestURI())
-                && StringUtils.equalsIgnoreCase(request.getMethod(), "post")) {
+    public void afterPropertiesSet() throws ServletException {
+        super.afterPropertiesSet();
+        String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(
+                securityProperties.getCode().getImage().getUrls(), ",");
+
+        for (String configUrl : configUrls) {
+            urls.add(configUrl);
+        }
+
+        urls.add("/authentication/form");
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
+
+        boolean match = false;
+
+        for (String url : urls) {
+            if (antPathMatcher.match(url, request.getRequestURI())) {
+                match = true;
+                break;
+            }
+        }
+
+        if (match) {
             try {
                 validate(new ServletWebRequest((request)));
             } catch (ValidateCodeException e) {
@@ -44,8 +77,10 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
     }
 
     private void validate(ServletWebRequest request) throws ServletRequestBindingException {
-        ImageCode imageCode = (ImageCode) sessionStrategy.getAttribute(request, ValidateCodeController.SESSION_KEY);
-        String codeInRequest = ServletRequestUtils.getStringParameter(request.getRequest(), "imageCode");
+        ImageCode imageCode = (ImageCode) sessionStrategy
+                .getAttribute(request, ValidateCodeController.SESSION_KEY);
+        String codeInRequest = ServletRequestUtils
+                .getStringParameter(request.getRequest(), "imageCode");
 
         if (StringUtils.isBlank(codeInRequest)) {
             throw new ValidateCodeException("验证码的值不能为空");
@@ -67,7 +102,12 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
         sessionStrategy.removeAttribute(request, ValidateCodeController.SESSION_KEY);
     }
 
-    public void setAuthenticationFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
+    public void setAuthenticationFailureHandler(
+            AuthenticationFailureHandler authenticationFailureHandler) {
         this.authenticationFailureHandler = authenticationFailureHandler;
+    }
+
+    public void setSecurityProperties(SecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
     }
 }
