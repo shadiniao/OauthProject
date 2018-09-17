@@ -6,23 +6,33 @@ package com.zyz.security.core.properties;
  * @author zhangyizhi
  */
 public class BrowserProperties {
-    private String loginPage = "/login.html";
+	private String loginPage = "/login.html";
 
-    private LoginType loginType = LoginType.JSON;
+	private LoginType loginType = LoginType.JSON;
 
-    public LoginType getLoginType() {
-        return loginType;
-    }
+	private int rememberMeSeconds = 3600;
 
-    public void setLoginType(LoginType loginType) {
-        this.loginType = loginType;
-    }
+	public int getRememberMeSeconds() {
+		return rememberMeSeconds;
+	}
 
-    public String getLoginPage() {
-        return loginPage;
-    }
+	public void setRememberMeSeconds(int rememberMeSeconds) {
+		this.rememberMeSeconds = rememberMeSeconds;
+	}
 
-    public void setLoginPage(String loginPage) {
-        this.loginPage = loginPage;
-    }
+	public LoginType getLoginType() {
+		return loginType;
+	}
+
+	public void setLoginType(LoginType loginType) {
+		this.loginType = loginType;
+	}
+
+	public String getLoginPage() {
+		return loginPage;
+	}
+
+	public void setLoginPage(String loginPage) {
+		this.loginPage = loginPage;
+	}
 }
