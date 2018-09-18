@@ -1,6 +1,7 @@
 package com.zyz.security.core.authentication.mobile;
 
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,10 @@ public class SmsCodeAuthenticationProvider implements AuthenticationProvider {
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		SmsCodeAuthenticationToken smsCodeAuthenticationToken = (SmsCodeAuthenticationToken) authentication;
 		UserDetails userDetails = userDetailsService.loadUserByUsername((String) smsCodeAuthenticationToken.getPrincipal());
+
+		if(userDetails == null) {
+			throw new InternalAuthenticationServiceException("无法获取用户信息");
+		}
 
 		SmsCodeAuthenticationToken result = new SmsCodeAuthenticationToken(userDetails, userDetails.getAuthorities());
 		result.setDetails(smsCodeAuthenticationToken.getDetails());
