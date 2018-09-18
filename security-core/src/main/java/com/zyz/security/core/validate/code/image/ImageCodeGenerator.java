@@ -1,6 +1,8 @@
-package com.zyz.security.core.validate.code;
+package com.zyz.security.core.validate.code.image;
 
 import com.zyz.security.core.properties.SecurityProperties;
+import com.zyz.security.core.validate.code.ValidateCodeGenerator;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -17,7 +19,7 @@ public class ImageCodeGenerator implements ValidateCodeGenerator {
     private SecurityProperties securityProperties;
 
     @Override
-    public ImageCode createImageCode(ServletWebRequest request) {
+    public ImageCode createCode(ServletWebRequest request) {
         int width = ServletRequestUtils
                 .getIntParameter(request.getRequest(), "width",
                         securityProperties.getCode().getImage().getWidth());

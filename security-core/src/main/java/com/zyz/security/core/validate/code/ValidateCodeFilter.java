@@ -1,13 +1,17 @@
 package com.zyz.security.core.validate.code;
 
 import com.zyz.security.core.properties.SecurityProperties;
+import com.zyz.security.core.validate.code.image.ImageCode;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -27,87 +31,88 @@ import org.springframework.web.filter.OncePerRequestFilter;
 // 继承OncePerRequestFilter, 这是spring中的一个工具类, 保证filter每次请求只会被调用一次
 public class ValidateCodeFilter extends OncePerRequestFilter implements InitializingBean {
 
-    private AuthenticationFailureHandler authenticationFailureHandler;
+	private AuthenticationFailureHandler authenticationFailureHandler;
 
-    private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
+	private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
 
-    private SecurityProperties securityProperties;
+	private SecurityProperties securityProperties;
 
-    private AntPathMatcher antPathMatcher = new AntPathMatcher();
+	private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    private Set<String> urls = new HashSet<>();
+	private Set<String> urls = new HashSet<>();
 
 
-    @Override
-    public void afterPropertiesSet() throws ServletException {
-        super.afterPropertiesSet();
-        String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(
-                securityProperties.getCode().getImage().getUrls(), ",");
+	@Override
+	public void afterPropertiesSet() throws ServletException {
+		super.afterPropertiesSet();
+		String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(
+				securityProperties.getCode().getImage().getUrls(), ",");
 
-        for (String configUrl : configUrls) {
-            urls.add(configUrl);
-        }
+		for (String configUrl : configUrls) {
+			urls.add(configUrl);
+		}
 
-        urls.add("/authentication/form");
-    }
+		urls.add("/authentication/form");
+	}
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+	                                FilterChain filterChain) throws ServletException, IOException {
 
-        boolean match = false;
+		boolean match = false;
 
-        for (String url : urls) {
-            if (antPathMatcher.match(url, request.getRequestURI())) {
-                match = true;
-                break;
-            }
-        }
+		for (String url : urls) {
+			if (antPathMatcher.match(url, request.getRequestURI())) {
+				match = true;
+				break;
+			}
+		}
 
-        if (match) {
-            try {
-                validate(new ServletWebRequest((request)));
-            } catch (ValidateCodeException e) {
-                authenticationFailureHandler.onAuthenticationFailure(request, response, e);
-                return;
-            }
-        }
+		if (match) {
+			try {
+				validate(new ServletWebRequest((request)));
+			} catch (ValidateCodeException e) {
+				authenticationFailureHandler.onAuthenticationFailure(request, response, e);
+				return;
+			}
+		}
 
-        filterChain.doFilter(request, response);
-    }
+		filterChain.doFilter(request, response);
+	}
 
-    private void validate(ServletWebRequest request) throws ServletRequestBindingException {
-        ImageCode imageCode = (ImageCode) sessionStrategy
-                .getAttribute(request, ValidateCodeController.SESSION_KEY);
-        String codeInRequest = ServletRequestUtils
-                .getStringParameter(request.getRequest(), "imageCode");
+	private void validate(ServletWebRequest request) throws ServletRequestBindingException {
+		String sessionName = ValidateCodeProcessor.SESSION_KEY_PREFIX + "IMAGE";
+		ImageCode imageCode = (ImageCode) sessionStrategy
+				.getAttribute(request, sessionName);
+		String codeInRequest = ServletRequestUtils
+				.getStringParameter(request.getRequest(), "imageCode");
 
-        if (StringUtils.isBlank(codeInRequest)) {
-            throw new ValidateCodeException("验证码的值不能为空");
-        }
+		if (StringUtils.isBlank(codeInRequest)) {
+			throw new ValidateCodeException("验证码的值不能为空");
+		}
 
-        if (imageCode == null) {
-            throw new ValidateCodeException("验证码不存在");
-        }
+		if (imageCode == null) {
+			throw new ValidateCodeException("验证码不存在");
+		}
 
-        if (imageCode.isExpried()) {
-            sessionStrategy.removeAttribute(request, ValidateCodeController.SESSION_KEY);
-            throw new ValidateCodeException("验证码已过期");
-        }
+		if (imageCode.isExpired()) {
+			sessionStrategy.removeAttribute(request, sessionName);
+			throw new ValidateCodeException("验证码已过期");
+		}
 
-        if (!StringUtils.equals(codeInRequest, imageCode.getCode())) {
-            throw new ValidateCodeException("验证码不匹配");
-        }
+		if (!StringUtils.equals(codeInRequest, imageCode.getCode())) {
+			throw new ValidateCodeException("验证码不匹配");
+		}
 
-        sessionStrategy.removeAttribute(request, ValidateCodeController.SESSION_KEY);
-    }
+		sessionStrategy.removeAttribute(request, sessionName);
+	}
 
-    public void setAuthenticationFailureHandler(
-            AuthenticationFailureHandler authenticationFailureHandler) {
-        this.authenticationFailureHandler = authenticationFailureHandler;
-    }
+	public void setAuthenticationFailureHandler(
+			AuthenticationFailureHandler authenticationFailureHandler) {
+		this.authenticationFailureHandler = authenticationFailureHandler;
+	}
 
-    public void setSecurityProperties(SecurityProperties securityProperties) {
-        this.securityProperties = securityProperties;
-    }
+	public void setSecurityProperties(SecurityProperties securityProperties) {
+		this.securityProperties = securityProperties;
+	}
 }

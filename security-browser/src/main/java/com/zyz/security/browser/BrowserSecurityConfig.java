@@ -77,7 +77,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authorizeRequests() // 对请求授权, 下面的语句都会受影响
 				.antMatchers("/authentication/require",
 						securityProperties.getBrowser().getLoginPage(),
-						"/code/image").permitAll() // 访问login.html不需要身份验证, 如果不配置这一行, 会造成死循环
+						"/code/*").permitAll() // 访问login.html不需要身份验证, 如果不配置这一行, 会造成死循环
 				.anyRequest() // 任何请求
 				.authenticated() // 都需要身份认证
 				.and()

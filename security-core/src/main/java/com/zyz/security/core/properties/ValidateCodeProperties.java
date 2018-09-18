@@ -6,13 +6,23 @@ package com.zyz.security.core.properties;
  * @author zhangyizhi
  */
 public class ValidateCodeProperties {
-    private ImageCodeProperties image = new ImageCodeProperties();
+	private ImageCodeProperties image = new ImageCodeProperties();
 
-    public ImageCodeProperties getImage() {
-        return image;
-    }
+	private SmsCodeProperties sms = new SmsCodeProperties();
 
-    public void setImage(ImageCodeProperties image) {
-        this.image = image;
-    }
+	public SmsCodeProperties getSms() {
+		return sms;
+	}
+
+	public void setSms(SmsCodeProperties sms) {
+		this.sms = sms;
+	}
+
+	public ImageCodeProperties getImage() {
+		return image;
+	}
+
+	public void setImage(ImageCodeProperties image) {
+		this.image = image;
+	}
 }
