@@ -16,30 +16,28 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SmsCodeAuthenticationSecurityConfig extends
-        SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
+		SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
-    @Autowired
-    private AuthenticationFailureHandler authenticationFailureHandler;
+	@Autowired
+	private AuthenticationFailureHandler authenticationFailureHandler;
 
-    @Autowired
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
+	@Autowired
+	private AuthenticationSuccessHandler authenticationSuccessHandler;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+	@Autowired
+	private UserDetailsService userDetailsService;
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        SmsCodeAuthenticationFilter smsCodeAuthenticationFilter = new SmsCodeAuthenticationFilter();
-        smsCodeAuthenticationFilter
-                .setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
-        smsCodeAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
-        smsCodeAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		SmsCodeAuthenticationFilter smsCodeAuthenticationFilter = new SmsCodeAuthenticationFilter();
+		smsCodeAuthenticationFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
+		smsCodeAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
+		smsCodeAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
 
-        SmsCodeAuthenticationProvider smsCodeAuthenticationProvider = new SmsCodeAuthenticationProvider();
-        smsCodeAuthenticationProvider.setUserDetailsService(userDetailsService);
+		SmsCodeAuthenticationProvider smsCodeAuthenticationProvider = new SmsCodeAuthenticationProvider();
+		smsCodeAuthenticationProvider.setUserDetailsService(userDetailsService);
 
-        http.authenticationProvider(smsCodeAuthenticationProvider)
-                .addFilterAfter(smsCodeAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
-    }
+		http.authenticationProvider(smsCodeAuthenticationProvider)
+				.addFilterAfter(smsCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+	}
 }
