@@ -1,6 +1,7 @@
 package com.zyz.security.browser;
 
 import com.zyz.security.browser.support.SimpleResponse;
+import com.zyz.security.core.properties.SecurityConstants;
 import com.zyz.security.core.properties.SecurityProperties;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +42,7 @@ public class BrowserSecurityController {
     /**
      * 需要身份认证时跳转到此
      */
-    @RequestMapping("/authentication/require")
+    @RequestMapping(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     public SimpleResponse requireAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
         SavedRequest savedRequest = requestCache.getRequest(request, response);

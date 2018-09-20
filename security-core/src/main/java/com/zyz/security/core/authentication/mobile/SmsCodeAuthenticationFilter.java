@@ -1,5 +1,7 @@
 package com.zyz.security.core.authentication.mobile;
 
+import com.zyz.security.core.properties.SecurityConstants;
+
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,14 +19,12 @@ import javax.servlet.http.HttpServletResponse;
  * @author zhangyizhi
  */
 public class SmsCodeAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+	private String mobileParameter = SecurityConstants.DEFAULT_PARAMETER_NAME_MOBILE;
 
-	public static final String SPRING_SECURITY_FORM_MOBILE_KEY = "mobile";
-
-	private String mobileParameter = SPRING_SECURITY_FORM_MOBILE_KEY;
 	private boolean postOnly = true;
 
 	public SmsCodeAuthenticationFilter() {
-		super(new AntPathRequestMatcher("/authentication/mobile", "POST"));
+		super(new AntPathRequestMatcher(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE, "POST"));
 	}
 
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {

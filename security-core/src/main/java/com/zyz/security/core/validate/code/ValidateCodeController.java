@@ -1,5 +1,6 @@
 package com.zyz.security.core.validate.code;
 
+import com.zyz.security.core.properties.SecurityConstants;
 import com.zyz.security.core.properties.SecurityProperties;
 import com.zyz.security.core.validate.code.image.ImageCode;
 import com.zyz.security.core.validate.code.sms.SmsCodeSender;
@@ -29,12 +30,13 @@ import org.springframework.web.context.request.ServletWebRequest;
 @RestController
 public class ValidateCodeController {
 	@Autowired
-	private Map<String, ValidateCodeProcessor> validateCodeProcessorMap;
+	private ValidateCodeProcessorHolder validateCodeProcessorHolder;
 
-	@GetMapping("/code/{type}")
+	@GetMapping(SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/{type}")
 	public void createCode(HttpServletRequest request, HttpServletResponse response, @PathVariable String type)
 			throws Exception {
-		ValidateCodeProcessor validateCodeProcessor = validateCodeProcessorMap.get(type + "CodeProcessor");
+		ValidateCodeProcessor validateCodeProcessor = validateCodeProcessorHolder.findValidateCodeProcessor(type);
+
 		if (validateCodeProcessor != null) {
 			validateCodeProcessor.create(new ServletWebRequest(request, response));
 		}

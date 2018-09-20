@@ -1,14 +1,13 @@
 package com.zyz.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zyz.security.core.properties.LoginType;
+import com.zyz.security.core.properties.LoginResponseType;
 import com.zyz.security.core.properties.SecurityProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +36,7 @@ public class CoreAuthenticationSuccessHandler extends SavedRequestAwareAuthentic
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
         logger.info("登录成功");
         // 如果配置的是json, 就还是用老的处理方式
-        if (securityProperties.getBrowser().getLoginType().equals(LoginType.JSON)) {
+        if (securityProperties.getBrowser().getLoginResponseType().equals(LoginResponseType.JSON)) {
             httpServletResponse.setContentType("application/json;charset=utf-8");
             httpServletResponse.getWriter().write(objectMapper.writeValueAsString(authentication));
         } else {

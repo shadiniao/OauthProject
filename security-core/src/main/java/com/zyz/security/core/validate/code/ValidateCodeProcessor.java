@@ -12,4 +12,6 @@ public interface ValidateCodeProcessor {
 
 	// 创建验证码
 	void create(ServletWebRequest request) throws Exception; // ServletWebRequest是一个对request,response进行包装的类, 这样在同时需要request和response时不用传两个参数
+
+	void validate(ServletWebRequest request) throws ValidateCodeException;
 }

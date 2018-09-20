@@ -2,14 +2,13 @@ package com.zyz.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zyz.security.browser.support.SimpleResponse;
-import com.zyz.security.core.properties.LoginType;
+import com.zyz.security.core.properties.LoginResponseType;
 import com.zyz.security.core.properties.SecurityProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +37,7 @@ public class CoreAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException ex) throws IOException, ServletException {
         logger.info("登录失败");
         // 如果配置的是json, 就还是用老的处理方式
-        if (securityProperties.getBrowser().getLoginType().equals(LoginType.JSON)) {
+        if (securityProperties.getBrowser().getLoginResponseType().equals(LoginResponseType.JSON)) {
             httpServletResponse.setContentType("application/json;charset=utf-8");
             httpServletResponse.getWriter().write(objectMapper.writeValueAsString(new SimpleResponse(ex.getMessage())));
         } else {

@@ -5,7 +5,7 @@ package com.zyz.security.core.properties;
  *
  * @author zhangyizhi
  */
-public enum LoginType {
+public enum LoginResponseType {
     JSON,
     HTML
 }

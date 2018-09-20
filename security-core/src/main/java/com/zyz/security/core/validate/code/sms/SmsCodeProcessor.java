@@ -1,5 +1,6 @@
 package com.zyz.security.core.validate.code.sms;
 
+import com.zyz.security.core.properties.SecurityConstants;
 import com.zyz.security.core.validate.code.ValidateCode;
 import com.zyz.security.core.validate.code.impl.AbstractValidateCodeProcessor;
 
@@ -16,14 +17,14 @@ import java.io.IOException;
  *
  * @author zhangyizhi
  */
-@Component("smsCodeProcessor")
+@Component("smsValidateCodeProcessor")
 public class SmsCodeProcessor extends AbstractValidateCodeProcessor<ValidateCode> {
 	@Autowired
 	private SmsCodeSender smsCodeSender;
 
 	@Override
 	protected void send(ServletWebRequest request, ValidateCode validateCode) throws IOException, ServletRequestBindingException {
-		String mobile = ServletRequestUtils.getRequiredStringParameter(request.getRequest(), "mobile");
+		String mobile = ServletRequestUtils.getRequiredStringParameter(request.getRequest(), SecurityConstants.DEFAULT_PARAMETER_NAME_MOBILE);
 		smsCodeSender.send(mobile, validateCode.getCode());
 	}
 }

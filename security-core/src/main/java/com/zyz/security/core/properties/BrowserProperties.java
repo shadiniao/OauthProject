@@ -6,9 +6,9 @@ package com.zyz.security.core.properties;
  * @author zhangyizhi
  */
 public class BrowserProperties {
-	private String loginPage = "/login.html";
+	private String loginPage = SecurityConstants.DEFAULT_LOGIN_PAGE_URL;
 
-	private LoginType loginType = LoginType.JSON;
+	private LoginResponseType loginResponseType = LoginResponseType.JSON;
 
 	private int rememberMeSeconds = 3600;
 
@@ -20,12 +20,12 @@ public class BrowserProperties {
 		this.rememberMeSeconds = rememberMeSeconds;
 	}
 
-	public LoginType getLoginType() {
-		return loginType;
+	public LoginResponseType getLoginResponseType() {
+		return loginResponseType;
 	}
 
-	public void setLoginType(LoginType loginType) {
-		this.loginType = loginType;
+	public void setLoginResponseType(LoginResponseType loginResponseType) {
+		this.loginResponseType = loginResponseType;
 	}
 
 	public String getLoginPage() {
