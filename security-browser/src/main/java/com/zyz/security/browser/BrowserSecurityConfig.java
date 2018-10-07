@@ -1,27 +1,21 @@
 package com.zyz.security.browser;
 
-import com.zyz.security.browser.authentication.CoreAuthenticationFailureHandler;
-import com.zyz.security.browser.authentication.CoreAuthenticationSuccessHandler;
 import com.zyz.security.core.authentication.AbstractChannelSecurityConfig;
 import com.zyz.security.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
 import com.zyz.security.core.properties.SecurityConstants;
 import com.zyz.security.core.properties.SecurityProperties;
-import com.zyz.security.core.validate.code.SmsCodeFilter;
-import com.zyz.security.core.validate.code.ValidateCodeFilter;
 import com.zyz.security.core.validate.code.ValidateCodeSecurityConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.social.security.SpringSocialConfigurer;
 
 import javax.sql.DataSource;
 
@@ -47,6 +41,9 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 
 	@Autowired
 	private ValidateCodeSecurityConfig validateCodeSecurityConfig;
+
+	@Autowired
+	private SpringSocialConfigurer coreSpringSocialConfigurer;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -75,7 +72,9 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 						securityProperties.getBrowser().getLoginPage(),
 						SecurityConstants.DEFAULT_UNAUTHENTICATION_URL,
 						SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
-						SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/*"
+						SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/*",
+						securityProperties.getBrowser().getSignUpUrl(),
+						"/user/regist"
 				)
 				.permitAll()
 				.anyRequest() // 任何请求
@@ -84,6 +83,8 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 				.csrf().disable() // 暂时屏蔽csrf
 				.apply(smsCodeAuthenticationSecurityConfig)
 				.and()
-				.apply(validateCodeSecurityConfig);
+				.apply(validateCodeSecurityConfig)
+				.and()
+				.apply(coreSpringSocialConfigurer);
 	}
 }

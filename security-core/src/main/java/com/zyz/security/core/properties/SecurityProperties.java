@@ -8,24 +8,34 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author zhangyizhi
  */
 @ConfigurationProperties(prefix = "core.security")
-public class SecurityProperties {
-    private BrowserProperties browser = new BrowserProperties();
+	public class SecurityProperties {
+	private BrowserProperties browser = new BrowserProperties();
 
-    private ValidateCodeProperties code = new ValidateCodeProperties();
+	private ValidateCodeProperties code = new ValidateCodeProperties();
 
-    public ValidateCodeProperties getCode() {
-        return code;
-    }
+	private SocialProperties social = new SocialProperties();
 
-    public void setCode(ValidateCodeProperties code) {
-        this.code = code;
-    }
+	public SocialProperties getSocial() {
+		return social;
+	}
 
-    public BrowserProperties getBrowser() {
-        return browser;
-    }
+	public void setSocial(SocialProperties social) {
+		this.social = social;
+	}
 
-    public void setBrowser(BrowserProperties browser) {
-        this.browser = browser;
-    }
+	public ValidateCodeProperties getCode() {
+		return code;
+	}
+
+	public void setCode(ValidateCodeProperties code) {
+		this.code = code;
+	}
+
+	public BrowserProperties getBrowser() {
+		return browser;
+	}
+
+	public void setBrowser(BrowserProperties browser) {
+		this.browser = browser;
+	}
 }
