@@ -42,11 +42,11 @@ public class SocialConfig extends SocialConfigurerAdapter {
 
 	@Bean
 	public SpringSocialConfigurer coreSpringSocialConfigurer() {
-//		CoreSpringSocialConfigurer coreSpringSocialConfigurer = new CoreSpringSocialConfigurer(securityProperties.getSocial().getFilterProcessesUrl());
+		CoreSpringSocialConfigurer coreSpringSocialConfigurer = new CoreSpringSocialConfigurer(securityProperties.getSocial().getFilterProcessesUrl());
 //		coreSpringSocialConfigurer.signupUrl(securityProperties.getBrowser().getSignUpUrl());
-//		return coreSpringSocialConfigurer;
+		return coreSpringSocialConfigurer;
 
-		return new SpringSocialConfigurer();
+//		return new SpringSocialConfigurer();
 	}
 
 	@Bean
