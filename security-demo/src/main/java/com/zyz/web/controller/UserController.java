@@ -44,7 +44,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-//	@Autowired
+	@Autowired
 	private ProviderSignInUtils providerSignInUtils;
 
 	@PostMapping("/regist")

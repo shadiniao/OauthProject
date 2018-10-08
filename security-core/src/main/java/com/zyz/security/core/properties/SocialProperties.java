@@ -9,7 +9,18 @@ public class SocialProperties {
 	private QQProperties qq = new QQProperties();
 
 	private GiteeProperties gitee = new GiteeProperties();
+
+	private GithubProperties github = new GithubProperties();
+
 	private String filterProcessesUrl = "/auth";
+
+	public GithubProperties getGithub() {
+		return github;
+	}
+
+	public void setGithub(GithubProperties github) {
+		this.github = github;
+	}
 
 	public GiteeProperties getGitee() {
 		return gitee;
