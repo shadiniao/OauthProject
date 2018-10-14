@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>账号绑定</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<script>
+    // 调用第三方绑定情况的接口, 来显示绑定或者解绑
+    $(document).ready(function () {
+        $.ajax({
+                   url: './connect',
+                   success: function (data) {
+                       const keys = Object.keys(data);
+
+                       const divSocial = document.getElementById("social");
+                       for (const key of keys) {
+                           const flag = data[key];
+                           if (flag) {
+                               const form = buildUnbindForm(key);
+                               divSocial.appendChild(form);
+                           } else {
+                               const form = buildBindForm(key);
+                               divSocial.appendChild(form);
+                           }
+                       }
+                   }
+               });
+    });
+
+    // 未绑定时显示一个表单
+    function buildBindForm(providerId) {
+        const form = document.createElement('form');
+        form.setAttribute("action", `/connect/${providerId}`);
+        form.setAttribute("method", "post");
+
+        const btn = document.createElement('button');
+        btn.setAttribute("type", "submit");
+        btn.innerHTML = 'bind ' + providerId;
+        form.appendChild(btn);
+        return form;
+    }
+
+    // 绑定时显示一个解绑表单
+    function buildUnbindForm(providerId) {
+        const form = document.createElement('form');
+        form.setAttribute("action", `/connect/${providerId}`);
+        form.setAttribute("method", "post");
+
+        const method = document.createElement('input');
+        method.setAttribute("type", "hidden");
+        method.setAttribute("name", "_method");
+        method.setAttribute("value", "delete");
+
+        const btn = document.createElement('button');
+        btn.setAttribute("type", "submit");
+        btn.innerHTML = 'unbind ' + providerId;
+        form.appendChild(method);
+        form.appendChild(btn);
+        return form;
+    }
+
+    // 解绑操作
+    function unbinding(providerId) {
+        $.ajax({
+                   url: 'http://localhost:8060/connect/' + providerId,
+                   type: 'delete',
+                   success: function (data) {
+                       console.log(data);
+                       alert(data);
+                   }
+               });
+    }
+</script>
+标准绑定页面
+<br>
+<div id="social">
+</div>
+</body>
+</html>

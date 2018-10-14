@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.security.SocialAuthenticationFilter;
 import org.springframework.social.security.SpringSocialConfigurer;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * 2018/9/21.
@@ -23,7 +24,9 @@ public class CoreSpringSocialConfigurer extends SpringSocialConfigurer {
 	@Override
 	protected <T> T postProcess(T object) {
 		SocialAuthenticationFilter filter = (SocialAuthenticationFilter) super.postProcess(object);
+
 		filter.setFilterProcessesUrl(filterProcessesUrl);
-		return super.postProcess(object);
+
+		return (T) filter;
 	}
 }

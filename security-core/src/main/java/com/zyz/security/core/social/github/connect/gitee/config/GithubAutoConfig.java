@@ -1,9 +1,9 @@
-package com.zyz.security.core.social.gitee.config;
+package com.zyz.security.core.social.github.connect.gitee.config;
 
-import com.zyz.security.core.properties.GiteeProperties;
+import com.zyz.security.core.properties.GithubProperties;
 import com.zyz.security.core.properties.SecurityProperties;
 import com.zyz.security.core.social.ProviderConnectedView;
-import com.zyz.security.core.social.gitee.connect.GiteeConnectionFactory;
+import com.zyz.security.core.social.github.connect.gitee.connect.GithubConnectionFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,22 +22,22 @@ import org.springframework.web.servlet.View;
  */
 @Configuration
 @Order(501)
-// 只有当配置了gitee相关的property该类才会生效
-@ConditionalOnProperty(prefix = "core.security.social.gitee", name = "app-id")
-public class GiteeAutoConfig extends SocialAutoConfigurerAdapter {
+// 只有当配置了github相关的property该类才会生效
+@ConditionalOnProperty(prefix = "core.security.social.github", name = "app-id")
+public class GithubAutoConfig extends SocialAutoConfigurerAdapter {
 
 	@Autowired
 	private SecurityProperties securityProperties;
 
 	@Override
 	protected ConnectionFactory<?> createConnectionFactory() {
-		GiteeProperties properties = securityProperties.getSocial().getGitee();
-		return new GiteeConnectionFactory(properties.getProviderId(), properties.getAppId(), properties.getAppSecret());
+		GithubProperties properties = securityProperties.getSocial().getGithub();
+		return new GithubConnectionFactory(properties.getProviderId(), properties.getAppId(), properties.getAppSecret());
 	}
 
-	@Bean({"connect/giteeConnected", "connect/giteeConnect"})
-	@ConditionalOnMissingBean(name = "connect/giteeConnected")
-	public View giteeConnectedView() {
+	@Bean({"connect/githubConnect", "connect/githubConnected"})
+	@ConditionalOnMissingBean(name = "connect/githubConnected")
+	public View githubConnectedView() {
 		return new ProviderConnectedView();
 	}
 }
