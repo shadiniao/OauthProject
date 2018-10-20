@@ -1,5 +1,6 @@
 package com.zyz.security.core.validate.code;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -7,39 +8,41 @@ import java.time.LocalDateTime;
  *
  * @author zhangyizhi
  */
-public class ValidateCode {
+public class ValidateCode implements Serializable {
 
-	private String code;
+    private static final long serialVersionUID = 345682795103603126L;
 
-	private LocalDateTime expireTime;
+    private String code;
 
-	public ValidateCode(String code, int expireIn) {
-		this.code = code;
-		this.expireTime = LocalDateTime.now().plusSeconds(expireIn);
-	}
+    private LocalDateTime expireTime;
 
-	public ValidateCode(String code, LocalDateTime expireTime) {
-		this.code = code;
-		this.expireTime = expireTime;
-	}
+    public ValidateCode(String code, int expireIn) {
+        this.code = code;
+        this.expireTime = LocalDateTime.now().plusSeconds(expireIn);
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public ValidateCode(String code, LocalDateTime expireTime) {
+        this.code = code;
+        this.expireTime = expireTime;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public LocalDateTime getExpireTime() {
-		return expireTime;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setExpireTime(LocalDateTime expireTime) {
-		this.expireTime = expireTime;
-	}
+    public LocalDateTime getExpireTime() {
+        return expireTime;
+    }
 
-	public boolean isExpired() {
-		return LocalDateTime.now().isAfter(this.expireTime);
-	}
+    public void setExpireTime(LocalDateTime expireTime) {
+        this.expireTime = expireTime;
+    }
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(this.expireTime);
+    }
 }
