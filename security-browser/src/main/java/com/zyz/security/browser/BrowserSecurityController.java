@@ -47,6 +47,13 @@ public class BrowserSecurityController {
 	@Autowired
 	private ProviderSignInUtils providerSignInUtils;
 
+	@RequestMapping("/session/invalid")
+	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+	public SimpleResponse sessionInvalid() {
+		String message = "session失效";
+		return new SimpleResponse(message);
+	}
+
 	/**
 	 * 需要身份认证时跳转到此
 	 */

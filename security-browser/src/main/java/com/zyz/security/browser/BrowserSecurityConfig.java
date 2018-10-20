@@ -1,5 +1,6 @@
 package com.zyz.security.browser;
 
+import com.zyz.security.browser.session.MySessionInformationExpiredStrategy;
 import com.zyz.security.core.authentication.AbstractChannelSecurityConfig;
 import com.zyz.security.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
 import com.zyz.security.core.properties.SecurityConstants;
@@ -67,7 +68,14 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 				.userDetailsService(userDetailsService)
 				.tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
 				.and()
-				.authorizeRequests() // 对请求授权, 下面的语句都会受影响
+			.sessionManagement()
+				.invalidSessionUrl("/session/invalid")
+				.maximumSessions(1)
+				.maxSessionsPreventsLogin(true)
+				.expiredSessionStrategy(new MySessionInformationExpiredStrategy())
+				.and()
+				.and()
+			.authorizeRequests() // 对请求授权, 下面的语句都会受影响
 				.antMatchers(
 						securityProperties.getBrowser().getLoginPage(),
 						SecurityConstants.DEFAULT_UNAUTHENTICATION_URL,
@@ -75,17 +83,18 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 						SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/*",
 						securityProperties.getBrowser().getSignUpUrl(),
 						"/user/regist",
-						"/social/user"
+						"/social/user",
+						"/session/invalid"
 				)
 				.permitAll()
 				.anyRequest() // 任何请求
 				.authenticated() // 都需要身份认证
 				.and()
-				.csrf().disable() // 暂时屏蔽csrf
-				.apply(smsCodeAuthenticationSecurityConfig)
+			.csrf().disable() // 暂时屏蔽csrf
+			.apply(smsCodeAuthenticationSecurityConfig)
 				.and()
-				.apply(validateCodeSecurityConfig)
+			.apply(validateCodeSecurityConfig)
 				.and()
-				.apply(coreSpringSocialConfigurer);
+			.apply(coreSpringSocialConfigurer);
 	}
 }
