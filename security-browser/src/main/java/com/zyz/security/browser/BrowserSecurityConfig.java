@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.session.InvalidSessionStrategy;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 import org.springframework.social.security.SpringSocialConfigurer;
 
 import javax.sql.DataSource;
@@ -46,6 +48,12 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 	@Autowired
 	private SpringSocialConfigurer coreSpringSocialConfigurer;
 
+    @Autowired
+    private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
+
+    @Autowired
+    private InvalidSessionStrategy invalidSessionStrategy;
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -69,10 +77,10 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 				.tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
 				.and()
 			.sessionManagement()
-				.invalidSessionUrl("/session/invalid")
-				.maximumSessions(1)
-				.maxSessionsPreventsLogin(true)
-				.expiredSessionStrategy(new MySessionInformationExpiredStrategy())
+				.invalidSessionStrategy(invalidSessionStrategy)
+				.maximumSessions(securityProperties.getBrowser().getSession().getMaximumSessions())
+				.maxSessionsPreventsLogin(securityProperties.getBrowser().getSession().isMaxSessionsPreventsLogin())
+				.expiredSessionStrategy(sessionInformationExpiredStrategy)
 				.and()
 				.and()
 			.authorizeRequests() // 对请求授权, 下面的语句都会受影响
@@ -84,7 +92,7 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 						securityProperties.getBrowser().getSignUpUrl(),
 						"/user/regist",
 						"/social/user",
-						"/session/invalid"
+                        securityProperties.getBrowser().getSession().getInvalidSessionUrl()
 				)
 				.permitAll()
 				.anyRequest() // 任何请求

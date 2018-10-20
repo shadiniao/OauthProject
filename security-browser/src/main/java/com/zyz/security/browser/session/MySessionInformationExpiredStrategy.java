@@ -8,10 +8,21 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 // session失效的处理策略
-public class MySessionInformationExpiredStrategy implements SessionInformationExpiredStrategy {
-	@Override
-	public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
-		event.getResponse().setContentType("application/json;charset=utf-8");
-		event.getResponse().getWriter().write("并发登录");
-	}
+public class MySessionInformationExpiredStrategy extends AbstractSessionStrategy implements
+        SessionInformationExpiredStrategy {
+
+    public MySessionInformationExpiredStrategy(String invalidSessionUrl) {
+        super(invalidSessionUrl);
+    }
+
+    @Override
+    public void onExpiredSessionDetected(SessionInformationExpiredEvent event)
+            throws IOException, ServletException {
+        onSessionInvalid(event.getRequest(), event.getResponse());
+    }
+
+    @Override
+    protected boolean isConcurrency() {
+        return true;
+    }
 }
