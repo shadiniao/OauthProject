@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.session.InvalidSessionStrategy;
@@ -54,6 +55,9 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
     @Autowired
     private InvalidSessionStrategy invalidSessionStrategy;
 
+    @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -83,6 +87,11 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 				.expiredSessionStrategy(sessionInformationExpiredStrategy)
 				.and()
 				.and()
+			.logout()
+				.logoutUrl("/signOut")
+				.logoutSuccessHandler(logoutSuccessHandler)
+                .deleteCookies("JSESSIONID")
+				.and()
 			.authorizeRequests() // 对请求授权, 下面的语句都会受影响
 				.antMatchers(
 						securityProperties.getBrowser().getLoginPage(),
@@ -92,6 +101,7 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 						securityProperties.getBrowser().getSignUpUrl(),
 						"/user/regist",
 						"/social/user",
+						"/mylogout.html",
                         securityProperties.getBrowser().getSession().getInvalidSessionUrl()
 				)
 				.permitAll()

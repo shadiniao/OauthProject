@@ -35,53 +35,62 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 public class BrowserSecurityController {
-	private Logger logger = LoggerFactory.getLogger(getClass());
 
-	private RequestCache requestCache = new HttpSessionRequestCache();
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private RequestCache requestCache = new HttpSessionRequestCache();
 
-	@Autowired
-	private SecurityProperties securityProperties;
+    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-	@Autowired
-	private ProviderSignInUtils providerSignInUtils;
+    @Autowired
+    private SecurityProperties securityProperties;
 
-	@RequestMapping("/session/invalid")
-	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-	public SimpleResponse sessionInvalid() {
-		String message = "session失效";
-		return new SimpleResponse(message);
-	}
+    @Autowired
+    private ProviderSignInUtils providerSignInUtils;
 
-	/**
-	 * 需要身份认证时跳转到此
-	 */
-	@RequestMapping(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)
-	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-	public SimpleResponse requireAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		SavedRequest savedRequest = requestCache.getRequest(request, response);
+    @RequestMapping("/session/invalid")
+    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+    public SimpleResponse sessionInvalid() {
+        String message = "session失效";
+        return new SimpleResponse(message);
+    }
 
-		if (savedRequest != null) {
-			String targetUrl = savedRequest.getRedirectUrl();
-			logger.info("引发跳转的请求是:" + targetUrl);
-			if (StringUtils.endsWithIgnoreCase(targetUrl, ".html")) {
-				redirectStrategy.sendRedirect(request, response, securityProperties.getBrowser().getLoginPage());
-			}
-		}
+    /**
+     * 需要身份认证时跳转到此
+     */
+    @RequestMapping(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)
+    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+    public SimpleResponse requireAuthentication(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        SavedRequest savedRequest = requestCache.getRequest(request, response);
 
-		return new SimpleResponse("访问的服务需要身份认证,请转到登录页");
-	}
+        if (savedRequest != null) {
+            String targetUrl = savedRequest.getRedirectUrl();
+            logger.info("引发跳转的请求是:" + targetUrl);
+            if (StringUtils.endsWithIgnoreCase(targetUrl, ".html")) {
+                redirectStrategy.sendRedirect(request, response,
+                        securityProperties.getBrowser().getLoginPage());
+            }
+        }
 
-	@GetMapping("/social/user")
-	public SocialUserInfo getSocialUserInfo(HttpServletRequest request) {
-		SocialUserInfo userInfo = new SocialUserInfo();
-		Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
-		userInfo.setProviderId(connection.getKey().getProviderId());
-		userInfo.setProviderUserId(connection.getKey().getProviderUserId());
-		userInfo.setNickname(connection.getDisplayName());
-		userInfo.setHeadimg(connection.getImageUrl());
+        return new SimpleResponse("访问的服务需要身份认证,请转到登录页");
+    }
 
-		return userInfo;
-	}
+    @GetMapping("/social/user")
+    public SocialUserInfo getSocialUserInfo(HttpServletRequest request) {
+        SocialUserInfo userInfo = new SocialUserInfo();
+        Connection<?> connection = providerSignInUtils
+                .getConnectionFromSession(new ServletWebRequest(request));
+        userInfo.setProviderId(connection.getKey().getProviderId());
+        userInfo.setProviderUserId(connection.getKey().getProviderUserId());
+        userInfo.setNickname(connection.getDisplayName());
+        userInfo.setHeadimg(connection.getImageUrl());
+
+        return userInfo;
+    }
+
+    @GetMapping("/")
+    public String index() {
+        return "forward:/index.html";
+    }
 }

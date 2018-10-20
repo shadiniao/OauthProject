@@ -17,6 +17,16 @@ public class BrowserProperties {
 
     private SessionProperties session = new SessionProperties();
 
+    private String signOutUrl;
+
+    public String getSignOutUrl() {
+        return signOutUrl;
+    }
+
+    public void setSignOutUrl(String signOutUrl) {
+        this.signOutUrl = signOutUrl;
+    }
+
     public SessionProperties getSession() {
         return session;
     }
