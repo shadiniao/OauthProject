@@ -1,4 +1,4 @@
-package com.zyz.security.browser.support;
+package com.zyz.security.core.support;
 
 /**
  * 2018/9/4.

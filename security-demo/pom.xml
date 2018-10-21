@@ -15,9 +15,14 @@
     </parent>
 
     <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>com.zyz.security</groupId>-->
+            <!--<artifactId>security-browser</artifactId>-->
+            <!--<version>${zyz.security.version}</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.zyz.security</groupId>
-            <artifactId>security-browser</artifactId>
+            <artifactId>security-app</artifactId>
             <version>${zyz.security.version}</version>
         </dependency>
         <dependency>

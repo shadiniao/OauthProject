@@ -1,27 +1,24 @@
 package com.zyz.security.browser;
 
-import com.zyz.security.browser.session.MySessionInformationExpiredStrategy;
 import com.zyz.security.core.authentication.AbstractChannelSecurityConfig;
 import com.zyz.security.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
 import com.zyz.security.core.properties.SecurityConstants;
 import com.zyz.security.core.properties.SecurityProperties;
 import com.zyz.security.core.validate.code.ValidateCodeSecurityConfig;
-
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import org.springframework.social.security.SpringSocialConfigurer;
-
-import javax.sql.DataSource;
 
 /**
  * 2018/9/3.
@@ -58,10 +55,8 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
     @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+	@Autowired
+	private FindByIndexNameSessionRepository sessionRepository;
 
 	@Bean
 	public PersistentTokenRepository persistentTokenRepository() {
@@ -85,6 +80,7 @@ public class BrowserSecurityConfig extends AbstractChannelSecurityConfig {
 				.maximumSessions(securityProperties.getBrowser().getSession().getMaximumSessions())
 				.maxSessionsPreventsLogin(securityProperties.getBrowser().getSession().isMaxSessionsPreventsLogin())
 				.expiredSessionStrategy(sessionInformationExpiredStrategy)
+				.sessionRegistry(new SpringSessionBackedSessionRegistry(sessionRepository))
 				.and()
 				.and()
 			.logout()

@@ -1,6 +1,6 @@
 package com.zyz.security.browser;
 
-import com.zyz.security.browser.support.SimpleResponse;
+import com.zyz.security.core.support.SimpleResponse;
 import com.zyz.security.browser.support.SocialUserInfo;
 import com.zyz.security.core.properties.SecurityConstants;
 import com.zyz.security.core.properties.SecurityProperties;

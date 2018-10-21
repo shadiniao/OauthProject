@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>test oauth</title>
+</head>
+<body>
+<button id="btn_code">授权码模式获取access_token</button>
+<button id="btn_password">密码模式获取access_token</button>
+
+<button id="btn_me">获取用户信息</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+  function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+    var context = "";
+    if (r != null) {
+      context = r[2];
+    }
+    reg = null;
+    r = null;
+    return context == null || context == "" || context == "undefined" ? "" : context;
+  }
+
+  $(document).ready(function () {
+    const code = getQueryString('code');
+
+    let token;
+
+    $('#btn_code').click(function () {
+      $.ajax({
+        url: `./oauth/token?code=${code}&grant_type=authorization_code&redirect_uri=http://localhost:8060/test-oauth.html&client_id=my&scope=all`,
+        type: 'post',
+        contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader("Authorization", "Basic " + btoa('my:123456'));
+        },
+        success: function (data) {
+          token = data.access_token;
+          console.log('授权码模式获得access_token', token);
+        }
+      });
+    });
+
+    $('#btn_password').click(function () {
+      $.ajax({
+        url: `./oauth/token`,
+        type: 'post',
+        data: {
+          grant_type: 'password',
+          username: 'admin',
+          password: '123456',
+          scope: 'all'
+        },
+        contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader("Authorization", "Basic " + btoa('my:123456'));
+        },
+        success: function (data) {
+          token = data.access_token;
+          console.log('password模式获得access_token', token);
+        }
+      });
+    });
+
+    $('#btn_me').click(function () {
+      $.ajax({
+        url: './user/me',
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader("Authorization", "Bearer " + token);
+        },
+        success: function (data) {
+          console.log('获取我的信息:', data);
+        }
+      })
+    });
+  });
+</script>
+</body>
+</html>

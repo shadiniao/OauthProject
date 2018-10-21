@@ -1,7 +1,7 @@
 package com.zyz.security.browser.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zyz.security.browser.support.SimpleResponse;
+import com.zyz.security.core.support.SimpleResponse;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
