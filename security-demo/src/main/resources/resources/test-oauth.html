@@ -5,9 +5,11 @@
   <title>test oauth</title>
 </head>
 <body>
-<button id="btn_code">授权码模式获取access_token</button>
+<button id="btn_code">授权码模式获取code</button>
+<button id="btn_token">授权码模式获取access_token</button>
+<br><br>
 <button id="btn_password">密码模式获取access_token</button>
-
+<br><br>
 <button id="btn_me">获取用户信息</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
@@ -16,12 +18,12 @@
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
     var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
     var context = "";
-    if (r != null) {
+    if (r !== null) {
       context = r[2];
     }
     reg = null;
     r = null;
-    return context == null || context == "" || context == "undefined" ? "" : context;
+    return context === null || context === "" || context === "undefined" ? "" : context;
   }
 
   $(document).ready(function () {
@@ -30,6 +32,14 @@
     let token;
 
     $('#btn_code').click(function () {
+        window.location.href = 'http://localhost:8060/oauth/authorize?response_type=code&client_id=my&redirect_uri=http://localhost:8060/test-oauth.html&scope=all';
+    });
+
+    $('#btn_token').click(function () {
+      if(!code) {
+          alert('请先获取code');
+      }
+
       $.ajax({
         url: `./oauth/token?code=${code}&grant_type=authorization_code&redirect_uri=http://localhost:8060/test-oauth.html&client_id=my&scope=all`,
         type: 'post',
